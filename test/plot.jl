@@ -27,7 +27,7 @@ function plot_pk()
     @show om0 + ode0
     pk0, pk1 = compute_pk(k, z, om0, ode0, ob0, h0, w, ns, run, deltaR2, mnu, Nnu)
 
-    open("pk.tsv", "w") do f
+    open("$(@__DIR__)/pk.tsv", "w") do f
         write(f, "# kh    pk  pk_nowiggle\n")
         writedlm(f, [k pk0 pk1])
     end
