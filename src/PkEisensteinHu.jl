@@ -17,6 +17,12 @@
 # March 13, 2018: ported from FORTRAN to Julia 0.6 by Henry Gebhardt, for fnu=0
 
 
+@doc raw"""
+    module PkEisensteinHu
+
+This module implements one function, `compute_pk()` for calculating the
+Eisenstein & Hu fitting function of the matter power spectrum.
+"""
 module PkEisensteinHu
 
 
@@ -49,19 +55,21 @@ function compute_pk(k_ov_h::AbstractArray, z=0.0, om0=0.3, ode0=0.7, ob0=0.05, h
 
     #TFset_parameters(om0*h0^2,ob0/om0,2.726)
     tfpars = TFset_parameters_nu(om0*h0^2,ob0/om0,fnu,Nnu,Tcmb)
+    @show tfpars.sound_horizon 2*π/tfpars.sound_horizon
 
     om0hh = om0 * h0^2
     f_baryon = ob0 / om0
     D = D1 / (1 + zeq)
 
     pk = similar(k_ov_h)
+    pknowiggle = similar(pk)
     for i=1:length(pk)
         k = k_ov_h[i]
         kh0 = k * h0
         trans_nowiggle = eisensteinhu(kh0,om0hh,f_baryon) # no-wiggle P(k) with massless neutrinos
-        trans_nu=TF_master(tfpars,kh0,om0hh,f_baryon,fnu,Nnu) # no-wiggle P(k) with massive neutrinos
+        trans_nowiggle_nu=TF_master(tfpars,kh0,om0hh,f_baryon,fnu,Nnu) # no-wiggle P(k) with massive neutrinos
         trans, tf_baryon, tf_cdm = TFtransfer_function(tfpars,kh0,om0hh,f_baryon) # P(k) with BAO and massless neutrinos
-        trans=(trans-trans_nowiggle)+trans_nu # add BAO to no-wiggle P(k) with massive neutrinos
+        trans_nu=trans_nowiggle_nu + (trans-trans_nowiggle) # add BAO to no-wiggle P(k) with massive neutrinos
         # modify growth by neutrinos
         #q = k_ov_h/(om0*h0)*(2.726/2.7)^2
         #if fnu != 0   #modified by Aniket
@@ -77,9 +85,12 @@ function compute_pk(k_ov_h::AbstractArray, z=0.0, om0=0.3, ode0=0.7, ob0=0.05, h
         pk[i] = (deltaR2*(2*k^2*2998^2/5/om0)^2*D^2
               *trans^2*(kh0/0.002)^(ns-1+0.5*run*log(kh0/0.002))
               *2*pi^2/k^3)
+        pknowiggle[i] = (deltaR2*(2*k^2*2998^2/5/om0)^2*D^2
+              *(trans_nowiggle)^2*(kh0/0.002)^(ns-1+0.5*run*log(kh0/0.002))
+              *2*pi^2/k^3)
         #@show k, pk[i]
     end
-    return pk
+    return pk, pknowiggle
 end
 
 
