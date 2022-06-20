@@ -1,7 +1,7 @@
 name = "PkEisensteinHu"
 uuid = "ee70d5b0-4c26-4f62-a7c4-21cc121a7fe1"
 authors = ["Henry Gebhardt <hsggebhardt@fastmail.com> and contributors"]
-version = "0.2.1"
+version = "0.3.0"
 
 [compat]
 julia = "1"
