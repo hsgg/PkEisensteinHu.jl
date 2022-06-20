@@ -16,5 +16,5 @@ using Test
     mnu=93.1e-3
     Nnu=3.046
     @show om0 + ode0
-    pkeh0 = compute_pk(k, z, om0, ode0, ob0, h0, w, ns, run, deltaR2, mnu, Nnu)
+    pkeh0 = compute_pk(k; z, om0, ode0, ob0, h0, w, ns, run, deltaR2, mnu, Nnu)
 end
