@@ -35,6 +35,24 @@ include("tf_fit_nu.jl")
 include("eisensteinhu.jl")
 
 
+@doc raw"""
+    compute_pk(k_ov_h::AbstractArray, z=0.0, om0=0.3, ode0=0.7, ob0=0.05, h0=0.7, w=-1.0,
+               ns=0.9672, run=0.0, deltaR2=2e-9, mnu=93.1e-3, Nnu=3.046)
+
+Computes the linear power spectrum as per Eisenstein & Hu (1998) and others.
+
+Returns the power spectrum with BAO wiggles and without wiggles at the given
+`k_ov_h` values.
+
+Neutrinos are currently ignored. When included, the interface will likely
+change a little.
+
+Example:
+```julia
+julia> kh = 10.0 .^ range(-4, 0, length=100)
+julia> pk, pk_nowiggles = compute_pk(kh)
+```
+"""
 function compute_pk(k_ov_h::AbstractArray, z=0.0, om0=0.3, ode0=0.7, ob0=0.05, h0=0.7, w=-1.0,
                     ns=0.9672, run=0.0, deltaR2=2e-9, mnu=93.1e-3, Nnu=3.046)
     #@show z om0 ode0 ob0 h0 w ns run deltaR2 mnu Nnu
